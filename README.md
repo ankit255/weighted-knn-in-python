@@ -98,19 +98,11 @@ algorithm** and the **Test Algorithm (RMSE)** function.
 def inverseweight(dist, num = 1.0, const = 0.1):
     return num / (dist + const)
 
-def weighted_knn(kdtree, test_point, target, k = 25,
+def weighted_knn(kdtree, test_point, target, k =25,
                 weight_fun = inverseweight):
     nearest_dist, nearest_ind = kdtree.query(test_point, k = k)
-    avg = 0.0
-    totalweight = 0.0
-    for i in range(k):
-        dist = nearest_dist[0][i]
-        idx = nearest_ind[0][i]
-        weight = weight_fun(dist)
-        avg += weight * target[idx]
-        totalweight += weight
-    avg = round(avg / totalweight)
-    return avg
+    avg = np.average(target[nearest_ind[0]], weights=[weight_fun(x) for x in nearest_dist[0]])
+    return round(avg)
 
 def testalgorithm(algo, kdtree, testset, target, test_target):
     error = 0.0
